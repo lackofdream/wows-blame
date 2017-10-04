@@ -4,7 +4,10 @@ import (
 	"net/http"
 	"strings"
 
+	"encoding/json"
+
 	"github.com/gorilla/mux"
+	"github.com/lackofdream/wows-blame/model"
 )
 
 type JSONRouter struct {
@@ -14,8 +17,11 @@ type JSONRouter struct {
 func (j *JSONRouter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if strings.HasPrefix(r.URL.Path, "/api/") {
 		w.Header().Set("Content-Type", "application/json")
-		if !setup_flag {
-			http.Error(w, "not set up yet", http.StatusUpgradeRequired)
+		if r.URL.Path != "/api/setup" && !SETUP_FLAG {
+			json.NewEncoder(w).Encode(model.WowsBlameVersion{
+				Ok:      false,
+				Message: "not setup yet",
+			})
 			return
 		}
 	}

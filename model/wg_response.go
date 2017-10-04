@@ -2,7 +2,7 @@ package model
 
 type AccountListResponse struct {
 	Status string `json:"status"`
-	Meta struct {
+	Meta   struct {
 		Count int `json:"count"`
 	} `json:"meta"`
 	Data []struct {
