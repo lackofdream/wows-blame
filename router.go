@@ -35,7 +35,7 @@ func init() {
 
 	registerSubRouter(r.PathPrefix("/api").Subrouter())
 
-	r.Handle("/", http.FileServer(http.Dir("./webapp/dist")))
+	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./webapp/dist")))
 
 	Router = &JSONRouter{r}
 }

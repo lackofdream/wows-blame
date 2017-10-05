@@ -1,0 +1,18 @@
+<md-card>
+  <md-card-title>Setup</md-card-title>
+  <md-card-content>
+    <p *ngIf="response && response.message">{{response.message}}</p>
+    <md-form-field class="full-width">
+      <input invalid mdInput placeholder="Application ID" [(ngModel)]="param.application_id" [formControl]="appIDControl">
+      <md-error *ngIf="response && response.app_id_message">{{response.app_id_message}}</md-error>
+    </md-form-field>
+
+    <md-form-field class="full-width">
+      <input mdInput placeholder="Game Path" [(ngModel)]="param.game_path" [formControl]="pathControl">
+      <md-error *ngIf="response && response.path_message">{{response.path_message}}</md-error>
+    </md-form-field>
+  </md-card-content>
+  <md-card-actions>
+    <button md-raised-button color="primary" (click)="submit()">Submit</button>
+  </md-card-actions>
+</md-card>

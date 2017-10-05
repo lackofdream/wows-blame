@@ -1,0 +1,8 @@
+<div style="display:flex;justify-content:center;align-items:center;height:100%;">
+  <div *ngIf="setup === false">
+    <app-setup></app-setup>
+  </div>
+  <div *ngIf="setup === true">
+    <app-blame></app-blame>
+  </div>
+</div>
