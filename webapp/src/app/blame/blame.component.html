@@ -1,3 +1,34 @@
-<p>
-  blame works!
-</p>
+<div class="team-dashboard">
+  <ul>
+    <li *ngFor="let i of players[0][0]">{{i.account_name}} {{i.win_rate|percent:'1.2-2'}} {{i.total_battle_count}} - {{i.ship_name}} {{i.ship_win_rate|percent:'1.2-2'}} {{i.ship_battle_count}}</li>
+  </ul>
+  <hr>
+  <ul>
+    <li *ngFor="let i of players[0][1]">{{i.account_name}} {{i.win_rate|percent:'1.2-2'}} {{i.total_battle_count}} - {{i.ship_name}} {{i.ship_win_rate|percent:'1.2-2'}} {{i.ship_battle_count}}</li>
+  </ul>
+  <hr>
+  <ul>
+    <li *ngFor="let i of players[0][2]">{{i.account_name}} {{i.win_rate|percent:'1.2-2'}} {{i.total_battle_count}} - {{i.ship_name}} {{i.ship_win_rate|percent:'1.2-2'}} {{i.ship_battle_count}}</li>
+  </ul>
+  <hr>
+  <ul>
+    <li *ngFor="let i of players[0][3]">{{i.account_name}} {{i.win_rate|percent:'1.2-2'}} {{i.total_battle_count}} - {{i.ship_name}} {{i.ship_win_rate|percent:'1.2-2'}} {{i.ship_battle_count}}</li>
+  </ul>
+</div>
+<div class="team-dashboard">
+  <ul>
+    <li *ngFor="let i of players[1][0]">{{i.account_name}} {{i.win_rate|percent:'1.2-2'}} {{i.total_battle_count}} - {{i.ship_name}} {{i.ship_win_rate|percent:'1.2-2'}} {{i.ship_battle_count}}</li>
+  </ul>
+  <hr>
+  <ul>
+    <li *ngFor="let i of players[1][1]">{{i.account_name}} {{i.win_rate|percent:'1.2-2'}} {{i.total_battle_count}} - {{i.ship_name}} {{i.ship_win_rate|percent:'1.2-2'}} {{i.ship_battle_count}}</li>
+  </ul>
+  <hr>
+  <ul>
+    <li *ngFor="let i of players[1][2]">{{i.account_name}} {{i.win_rate|percent:'1.2-2'}} {{i.total_battle_count}} - {{i.ship_name}} {{i.ship_win_rate|percent:'1.2-2'}} {{i.ship_battle_count}}</li>
+  </ul>
+  <hr>
+  <ul>
+    <li *ngFor="let i of players[1][3]">{{i.account_name}} {{i.win_rate|percent:'1.2-2'}} {{i.total_battle_count}} - {{i.ship_name}} {{i.ship_win_rate|percent:'1.2-2'}} {{i.ship_battle_count}}</li>
+  </ul>
+</div>

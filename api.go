@@ -9,6 +9,10 @@ import (
 
 	"os"
 
+	"strings"
+
+	"errors"
+
 	"github.com/gorilla/mux"
 	"github.com/lackofdream/wows-blame/model"
 )
@@ -17,6 +21,7 @@ func registerSubRouter(r *mux.Router) {
 	r.HandleFunc("/version", version)
 	r.HandleFunc("/player", playerWithShip)
 	r.HandleFunc("/setup", setup)
+	r.HandleFunc("/match", match)
 }
 
 func version(w http.ResponseWriter, r *http.Request) {
@@ -30,6 +35,9 @@ func version(w http.ResponseWriter, r *http.Request) {
 }
 
 func getPlayerID(name string) (string, error) {
+	if strings.HasPrefix(name, "Bot_") {
+		return "", fmt.Errorf("cannot find player")
+	}
 	req, err := http.NewRequest("GET", WOWS_AISA_API_URL+"/account/list/", nil)
 	if err != nil {
 		return "", err
@@ -49,10 +57,12 @@ func getPlayerID(name string) (string, error) {
 
 	json.NewDecoder(rsp.Body).Decode(&accountList)
 
-	if len(accountList.Data) == 0 {
-		return "", fmt.Errorf("cannot find player")
+	for _, account := range accountList.Data {
+		if strings.ToLower(account.Nickname) == strings.ToLower(name) {
+			return fmt.Sprintf("%d", account.AccountID), nil
+		}
 	}
-	return fmt.Sprintf("%d", accountList.Data[0].AccountID), nil
+	return "", fmt.Errorf("cannot find player")
 }
 
 func getPlayerInfo(accountID string) ([]byte, error) {
@@ -95,6 +105,15 @@ func handleWGPlayerInfoResponse(body []byte, accountID string, payload *model.Wo
 	var playerInfo map[string]*json.RawMessage
 	if err := json.Unmarshal(*playerInfoData[accountID], &playerInfo); err != nil {
 		return err
+	}
+
+	var hiddenProfile bool
+	if err := json.Unmarshal(*playerInfo["hidden_profile"], &hiddenProfile); err != nil {
+		return err
+	}
+
+	if hiddenProfile {
+		return errors.New("player's data not public")
 	}
 
 	if err := json.Unmarshal(*playerInfo["nickname"], &payload.AccountName); err != nil {
@@ -347,6 +366,26 @@ func setup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	setupFromParam(param, true)
+	json.NewEncoder(w).Encode(rsp)
+}
+
+func match(w http.ResponseWriter, r *http.Request) {
+	var rsp model.WowsBlameMatchResponse
+	rsp.Ok = false
+	body, err := ioutil.ReadFile(GAME_PATH + string(os.PathSeparator) + "replays" + string(os.PathSeparator) + "tempArenaInfo.json")
+	if err != nil {
+		rsp.Message = err.Error()
+		json.NewEncoder(w).Encode(rsp)
+		return
+	}
+
+	if err := json.Unmarshal(body, &rsp.Data); err != nil {
+		rsp.Message = err.Error()
+		json.NewEncoder(w).Encode(rsp)
+		return
+	}
+
+	rsp.Ok = true
 	json.NewEncoder(w).Encode(rsp)
 }
 

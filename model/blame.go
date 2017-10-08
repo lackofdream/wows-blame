@@ -9,7 +9,7 @@ type WowsBlameVersion struct {
 }
 
 type WowsBlamePlayerPayload struct {
-	WinRate          float64 `json:"destroyer_win_rate"`
+	WinRate          float64 `json:"win_rate"`
 	TotalBattleCount int     `json:"total_battle_count"`
 	AccountName      string  `json:"account_name"`
 	AccountID        string  `json:"account_id"`
@@ -38,4 +38,10 @@ type WowsBlameSetupResponse struct {
 	PathOk       bool   `json:"path_ok"`
 	PathMessage  string `json:"path_message"`
 	Message      string `json:"message"`
+}
+
+type WowsBlameMatchResponse struct {
+	Ok      bool      `json:"ok"`
+	Message string    `json:"message"`
+	Data    ArenaInfo `json:"data"`
 }

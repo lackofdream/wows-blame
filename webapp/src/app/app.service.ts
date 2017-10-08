@@ -25,4 +25,22 @@ export class AppService {
             param,
         );
     }
+
+    match() {
+        return this.http.get(
+            `http://${this.host}:${this.port}/api/match`,
+        );
+    }
+
+    player(playerName: string, shipID: number) {
+        return this.http.get(
+            `http://${this.host}:${this.port}/api/player`,
+            {
+                params: {
+                    name: playerName,
+                    ship_id: shipID,
+                }
+            }
+        );
+    }
 }

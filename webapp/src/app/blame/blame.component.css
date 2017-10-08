@@ -1,0 +1,14 @@
+.team-dashboard {
+    width: 45%;
+    margin: 10px;
+    height: 80%;
+    border: solid 2px rgba(255, 255, 255, 0.4);
+    background-color: #1f434f;
+}
+
+ul {
+    list-style: none;
+    padding: 0 20px;
+    font-size: 1.3em;
+    color: #ffffff;
+}
