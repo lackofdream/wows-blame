@@ -27,3 +27,5 @@ _testmain.go
 *.out
 .idea/
 .config
+build/
+windows.tar.gz
