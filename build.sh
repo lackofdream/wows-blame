@@ -5,7 +5,7 @@ WDIR=$(pwd)
 mkdir -p build/webapp
 cd build
 
-env GOARCH=amd64 GOOS=windows go build ../cli
+env GOARCH=amd64 GOOS=windows go build -ldflags "-s -w" ../cli
 
 cd $WDIR/webapp
 npm install
