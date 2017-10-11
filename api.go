@@ -230,6 +230,10 @@ func handleWGShipStatWiki(body []byte, accountID string, payload *model.WowsBlam
 		return err
 	}
 
+	if len(shipStatInfoData[accountID]) == 0 {
+		return errors.New("no ship data found")
+	}
+
 	var shipStatInfo map[string]*json.RawMessage
 	if err := json.Unmarshal(*shipStatInfoData[accountID][0], &shipStatInfo); err != nil {
 		return err
