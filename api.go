@@ -139,7 +139,11 @@ func handleWGPlayerInfoResponse(body []byte, accountID string, payload *model.Wo
 		return err
 	}
 	payload.TotalBattleCount = battles
-	payload.WinRate = float64(wins) / float64(battles)
+	if battles == 0 {
+		payload.WinRate = 0
+	} else {
+		payload.WinRate = float64(wins) / float64(battles)
+	}
 
 	return nil
 }
@@ -253,7 +257,11 @@ func handleWGShipStatWiki(body []byte, accountID string, payload *model.WowsBlam
 		return err
 	}
 	payload.ShipBattleCount = battles
-	payload.ShipWinRate = float64(wins) / float64(battles)
+	if battles == 0 {
+		payload.ShipWinRate = 0
+	} else {
+		payload.ShipWinRate = float64(wins) / float64(battles)
+	}
 
 	return nil
 }
