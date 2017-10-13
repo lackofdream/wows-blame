@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpModule } from '@angular/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { MdCardModule, MdInputModule, MdButtonModule } from '@angular/material';
+import { MatCardModule, MatInputModule, MatButtonModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
@@ -22,9 +22,9 @@ import { BlameComponent } from './blame/blame.component';
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
-    MdCardModule,
-    MdInputModule,
-    MdButtonModule,
+    MatCardModule,
+    MatInputModule,
+    MatButtonModule,
   ],
   providers: [AppService],
   bootstrap: [AppComponent]
