@@ -12,6 +12,6 @@ npm install
 ng build -prod --aot --output-path $WDIR/build/webapp/dist
 
 cd $WDIR
-tar czvf windows.tar.gz build/
+tar czvf windows.tar.gz build/ --transform 's/^build/wows-blame/'
 
 rm -rf build
