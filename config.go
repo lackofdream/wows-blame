@@ -6,21 +6,21 @@ import (
 	"log"
 	"os"
 
-	"github.com/lackofdream/wows-blame/model"
+	"gitlab.com/lackofdream/wows-blame/model"
 )
 
 const (
-	WOWS_AISA_API_URL string = "https://api.worldofwarships.asia/wows"
+	WowsAsiaApiUrl string = "https://api.worldofwarships.asia/wows"
 )
 
 var (
-	SETUP_FLAG     bool
-	APPLICATION_ID string
-	GAME_PATH      string
+	SetupFlag     bool
+	ApplicationId string
+	GamePath      string
 )
 
 func init() {
-	SETUP_FLAG = false
+	SetupFlag = false
 	info, err := os.Stat(".config")
 	if err != nil {
 		return

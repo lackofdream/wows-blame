@@ -14,7 +14,7 @@ import (
 	"errors"
 
 	"github.com/gorilla/mux"
-	"github.com/lackofdream/wows-blame/model"
+	"gitlab.com/lackofdream/wows-blame/model"
 )
 
 func registerSubRouter(r *mux.Router) {
@@ -24,7 +24,7 @@ func registerSubRouter(r *mux.Router) {
 	r.HandleFunc("/match", match)
 }
 
-func version(w http.ResponseWriter, r *http.Request) {
+func version(w http.ResponseWriter, _ *http.Request) {
 	json.NewEncoder(w).Encode(model.WowsBlameVersion{
 		Ok: true,
 		Data: struct {
@@ -38,13 +38,13 @@ func getPlayerID(name string) (string, error) {
 	if strings.HasPrefix(name, "Bot_") {
 		return "", fmt.Errorf("cannot find player")
 	}
-	req, err := http.NewRequest("GET", WOWS_AISA_API_URL+"/account/list/", nil)
+	req, err := http.NewRequest("GET", WowsAsiaApiUrl+"/account/list/", nil)
 	if err != nil {
 		return "", err
 	}
 
 	q := req.URL.Query()
-	q.Add("application_id", APPLICATION_ID)
+	q.Add("application_id", ApplicationId)
 	q.Add("search", name)
 	req.URL.RawQuery = q.Encode()
 
@@ -66,12 +66,12 @@ func getPlayerID(name string) (string, error) {
 }
 
 func getPlayerInfo(accountID string) ([]byte, error) {
-	req, err := http.NewRequest("GET", WOWS_AISA_API_URL+"/account/info/", nil)
+	req, err := http.NewRequest("GET", WowsAsiaApiUrl+"/account/info/", nil)
 	if err != nil {
 		return nil, err
 	}
 	q := req.URL.Query()
-	q.Add("application_id", APPLICATION_ID)
+	q.Add("application_id", ApplicationId)
 	q.Add("account_id", accountID)
 	req.URL.RawQuery = q.Encode()
 
@@ -149,13 +149,13 @@ func handleWGPlayerInfoResponse(body []byte, accountID string, payload *model.Wo
 }
 
 func getShipWiki(shipID string) ([]byte, error) {
-	req, err := http.NewRequest("GET", WOWS_AISA_API_URL+"/encyclopedia/ships/", nil)
+	req, err := http.NewRequest("GET", WowsAsiaApiUrl+"/encyclopedia/ships/", nil)
 	if err != nil {
 		return nil, err
 	}
 
 	q := req.URL.Query()
-	q.Add("application_id", APPLICATION_ID)
+	q.Add("application_id", ApplicationId)
 	q.Add("ship_id", shipID)
 	q.Add("language", "en")
 	req.URL.RawQuery = q.Encode()
@@ -201,13 +201,13 @@ func handleWGShipWiki(body []byte, shipID string, payload *model.WowsBlamePlayer
 }
 
 func getShipStat(accountID string, shipID string) ([]byte, error) {
-	req, err := http.NewRequest("GET", WOWS_AISA_API_URL+"/ships/stats/", nil)
+	req, err := http.NewRequest("GET", WowsAsiaApiUrl+"/ships/stats/", nil)
 	if err != nil {
 		return nil, err
 	}
 
 	q := req.URL.Query()
-	q.Add("application_id", APPLICATION_ID)
+	q.Add("application_id", ApplicationId)
 	q.Add("ship_id", shipID)
 	q.Add("account_id", accountID)
 	req.URL.RawQuery = q.Encode()
@@ -381,10 +381,10 @@ func setup(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(rsp)
 }
 
-func match(w http.ResponseWriter, r *http.Request) {
+func match(w http.ResponseWriter, _ *http.Request) {
 	var rsp model.WowsBlameMatchResponse
 	rsp.Ok = false
-	body, err := ioutil.ReadFile(GAME_PATH + string(os.PathSeparator) + "replays" + string(os.PathSeparator) + "tempArenaInfo.json")
+	body, err := ioutil.ReadFile(GamePath + string(os.PathSeparator) + "replays" + string(os.PathSeparator) + "tempArenaInfo.json")
 	if err != nil {
 		rsp.Message = err.Error()
 		json.NewEncoder(w).Encode(rsp)
@@ -414,9 +414,9 @@ func setupFromParam(param model.WowsBlameSetupParam, writeFile bool) error {
 		}
 	}
 
-	SETUP_FLAG = true
-	APPLICATION_ID = param.ApplicationID
-	GAME_PATH = param.GamePath
+	SetupFlag = true
+	ApplicationId = param.ApplicationID
+	GamePath = param.GamePath
 
 	return nil
 }
@@ -433,7 +433,7 @@ func validateFromParam(param model.WowsBlameSetupParam, result *model.WowsBlameS
 		result.PathMessage = ""
 	}
 
-	req, err := http.NewRequest("GET", WOWS_AISA_API_URL+"/encyclopedia/info/", nil)
+	req, err := http.NewRequest("GET", WowsAsiaApiUrl+"/encyclopedia/info/", nil)
 	if err != nil {
 		return
 	}

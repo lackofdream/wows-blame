@@ -3,9 +3,9 @@ package main
 import (
 	"net/http"
 
-	. "github.com/lackofdream/wows-blame"
-	"time"
 	"github.com/skratchdot/open-golang/open"
+	. "gitlab.com/lackofdream/wows-blame"
+	"time"
 )
 
 func main() {
