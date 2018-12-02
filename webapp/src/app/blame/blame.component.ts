@@ -1,103 +1,118 @@
-import { Component, OnInit } from '@angular/core';
-import { AppService } from '../app.service';
-import { WowsBlameMatchResponse, ArenaInfo, WowsBlamePlayerPayload, WowsBlamePlayer } from '../models';
-import { Observable } from 'rxjs/Rx';
-import { Response } from '@angular/http';
+import {Component} from '@angular/core';
+import {ApiService} from '../api.service';
+import {concat, Observable, of, Subscription, timer, zip} from 'rxjs';
+import {flatMap, map, tap} from 'rxjs/operators';
+import {fromArray} from 'rxjs/internal/observable/fromArray';
 
 @Component({
   selector: 'app-blame',
   templateUrl: './blame.component.html',
   styleUrls: ['./blame.component.css']
 })
-export class BlameComponent implements OnInit {
+export class BlameComponent {
 
-  private cache: ArenaInfo;
-  playerInfo = new Object();
-  shyPlayers: string[] = [];
-
-  players: WowsBlamePlayerPayload[][][] = [[[], [], [], []], [[], [], [], []]];
-
-  constructor(
-    private appService: AppService
-  ) { }
-
-  private cacheResponse = response => {
-    const match = response.json() as WowsBlameMatchResponse;
-    if (!match.ok || (this.cache && match.data.dateTime === this.cache.dateTime)) {
-      return undefined;
+  private matchInfo: any = {};
+  public wiki = {
+    ready: false,
+    player: {},
+    ship: {},
+    playerWithShip: {},
+    playerId: {},
+  };
+  private players = {
+    f: [],
+    e: [],
+  };
+  private lastBattleTime = '';
+  private matchSub: Subscription;
+  private tick: Observable<number> = timer(1000, 5000);
+  private getMatch: Observable<any> = this.api.getMatch();
+  private battleTimeChecker = (x: any) => {
+    if (x.dateTime !== this.lastBattleTime) {
+      this.lastBattleTime = x.dateTime;
+      this.wiki.ready = false;
+      this.players = {
+        f: [],
+        e: [],
+      };
+      return x;
     }
-    this.cache = match.data;
-    return this.cache;
-  }
+    throw null;
+  };
+  private matchToVehicles = x => {
+    return fromArray(x.vehicles);
+  };
+  private buildShipWiki = (vehicle) => {
+    return this.api.getShip(vehicle.shipId).pipe(
+      map(x => {
+        this.wiki.ship[Object.entries(x)[0][0]] = x[Object.entries(x)[0][0]];
+      }),
+    );
+  };
+  private buildPlayerWiki = (vehicle) => {
+    return zip(of(vehicle), this.api.getPlayerId(vehicle.name)).pipe(
+      flatMap((zipped: [any, any]) => {
+        const v = zipped[0];
+        const data = zipped[1];
+        const player = {
+          id: data[0].account_id,
+          name: data[0].nickname,
+        };
+        this.wiki.playerId[data[0].nickname] = data[0].account_id;
+        return zip(this.api.getPlayerShipStats(player.id, v.shipId), this.api.getPlayerStats(player.id));
+      }),
+      map((zipped: [any, any]) => {
+        const playerWithShip = zipped[0], player = zipped[1];
+        if (Object.entries(playerWithShip).length !== 0) {
+          this.wiki.playerWithShip[Object.entries(playerWithShip)[0][0]] = Object.entries(playerWithShip)[0][1][0];
+          this.wiki.player[Object.entries(player)[0][0]] = Object.entries(player)[0][1];
+        }
+      }),
+    );
+  };
 
-  ngOnInit() {
-    Observable.interval(3000).exhaustMap(() => this.appService.match().map(
-      this.cacheResponse
-    ).flatMap(this.lookup).map(this.handlePlayer)).subscribe(this.updateView);
-  }
+  private buildWiki = (vehicle) => {
+    return concat(this.buildShipWiki(vehicle), this.buildPlayerWiki(vehicle));
+  };
 
-  private lookup = (info: ArenaInfo) => {
-    if (!info) {
-      return Observable.of(undefined);
+  private fullCheck = this.getMatch.pipe(
+    map(this.battleTimeChecker),
+    tap(data => this.matchInfo = data),
+    flatMap(this.matchToVehicles),
+    flatMap(this.buildWiki),
+  );
+
+  private showPlayers = () => {
+    const playersByType = {
+      AirCarrier: [],
+      Battleship: [],
+      Cruiser: [],
+      Destroyer: [],
+    };
+    for (const p of this.matchInfo.vehicles) {
+      const shipType = this.wiki.ship[p.shipId].type;
+      playersByType[shipType].push(p);
     }
-    return Observable.merge(...info.vehicles.map(player => this.appService.player(player.name, player.shipId)));
-  }
-
-  private handlePlayer = response => {
-    if (!response) {
-      return false;
-    }
-    const body = response.json() as WowsBlamePlayer;
-    const player = body.data;
-    if (!player.account_name) {
-      return false;
-    }
-    this.playerInfo[player.account_name] = player;
-    return true;
-  }
-
-  private updateView = (result) => {
-    if (!result) {
-      return;
-    }
-    this.players = [[[], [], [], []], [[], [], [], []]];
-    this.shyPlayers = [];
-
-    this.cache.vehicles.map(v => {
-      if (!this.playerInfo[v.name]) {
-        this.shyPlayers.push(v.name);
-        return;
+    for (const [k, v] of Object.entries(playersByType)) {
+      for (const p of v) {
+        this.players[p.relation === 2 ? 'e' : 'f'].push(p);
       }
-      const info = this.playerInfo[v.name] as WowsBlamePlayerPayload;
-      const firstIndex = v.relation === 0 ? 0 : v.relation - 1;
-      switch (info.ship_type) {
-        case 'AirCarrier':
-          this.players[firstIndex][0].push(info);
-          break;
-        case 'Battleship':
-          this.players[firstIndex][1].push(info);
-          break;
-        case 'Cruiser':
-          this.players[firstIndex][2].push(info);
-          break;
-        case 'Destroyer':
-          this.players[firstIndex][3].push(info);
-          break;
-      }
-    });
-
-    for (let idx = 0; idx < 2; idx++) {
-      for (let _idx = 0; _idx < 4; _idx++) {
-        this.players[idx][_idx] = this.players[idx][_idx].sort((a: WowsBlamePlayerPayload, b: WowsBlamePlayerPayload) => {
-          if (a.ship_win_rate > b.ship_win_rate) {
-            return -1;
-          } else if (a.ship_win_rate === b.ship_win_rate) {
-            return 0;
-          }
-          return 1;
-        });
-      }
     }
+    console.log(this.wiki);
+    console.log(this.players);
+    this.wiki.ready = true;
+  };
+
+  private handleTick = () => {
+    if (!this.matchSub || this.matchSub.closed) {
+      this.matchSub = this.fullCheck.subscribe(() => {
+      }, (err) => {
+      }, this.showPlayers);
+    }
+  };
+
+  constructor(private api: ApiService) {
+    this.tick.subscribe(this.handleTick);
   }
 
 }

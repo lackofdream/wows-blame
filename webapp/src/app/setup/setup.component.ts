@@ -1,7 +1,6 @@
-import { Component } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
-import { WowsBlameSetupParam, WowsBlameSetupResponse } from '../models';
-import { AppService } from '../app.service';
+import {Component} from '@angular/core';
+import {FormControl, Validators} from '@angular/forms';
+import {ApiService} from '../api.service';
 
 @Component({
   selector: 'app-setup',
@@ -10,24 +9,22 @@ import { AppService } from '../app.service';
 })
 export class SetupComponent {
 
-  param: WowsBlameSetupParam = {
-    application_id: '',
-    game_path: '',
-  };
-
+  response: any;
   appIDControl = new FormControl('', [Validators.required]);
   pathControl = new FormControl('', [Validators.required]);
 
-  response: WowsBlameSetupResponse;
-
   constructor(
-    private appService: AppService,
-  ) { }
+    private appService: ApiService,
+  ) {
+  }
 
   submit() {
-    this.appService.setup(this.param).subscribe(
+    this.appService.setup({
+      application_id: this.appIDControl.value,
+      game_path: this.pathControl.value,
+    }).subscribe(
       response => {
-        this.response = WowsBlameSetupResponse.createFrom(response.json());
+        this.response = response;
         if (this.response.ok) {
           window.location.reload();
         } else {

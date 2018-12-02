@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { AppService } from './app.service';
+import {Component} from '@angular/core';
+import {ApiService} from './api.service';
 
 @Component({
   selector: 'app-root',
@@ -7,12 +7,14 @@ import { AppService } from './app.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  setup: boolean;
-  constructor(
-    private appService: AppService,
-  ) {
-    this.appService.isSetup().subscribe(result => this.setup = result);
-  }
 
+  public setup: boolean = null;
+
+  constructor(private api: ApiService) {
+    this.api.getToken().subscribe(
+      (token) => this.setup = true,
+      (_) => this.setup = false,
+    );
+  }
 
 }

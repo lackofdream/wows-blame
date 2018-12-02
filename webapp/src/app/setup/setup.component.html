@@ -3,12 +3,12 @@
   <mat-card-content>
     <p *ngIf="response && response.message">{{response.message}}</p>
     <mat-form-field class="full-width">
-      <input invalid matInput placeholder="Application ID" [(ngModel)]="param.application_id" [formControl]="appIDControl">
+      <input matInput placeholder="Application ID" [formControl]="appIDControl">
       <mat-error *ngIf="response && response.app_id_message">{{response.app_id_message}}</mat-error>
     </mat-form-field>
 
     <mat-form-field class="full-width">
-      <input matInput placeholder="Game Path" [(ngModel)]="param.game_path" [formControl]="pathControl">
+      <input matInput placeholder="Game Path" [formControl]="pathControl">
       <mat-error *ngIf="response && response.path_message">{{response.path_message}}</mat-error>
     </mat-form-field>
   </mat-card-content>

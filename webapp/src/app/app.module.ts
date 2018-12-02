@@ -1,33 +1,35 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { HttpModule } from '@angular/http';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { MatCardModule, MatInputModule, MatButtonModule, NoConflictStyleCompatibilityMode } from '@angular/material';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {BrowserModule} from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
+import {HttpClientModule} from '@angular/common/http';
 
-import { AppComponent } from './app.component';
-import { AppService } from './app.service';
-import { SetupComponent } from './setup/setup.component';
+import {AppComponent} from './app.component';
+import {SetupComponent} from './setup/setup.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule} from '@angular/material';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { BlameComponent } from './blame/blame.component';
+import { CardComponent } from './card/card.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SetupComponent,
-    BlameComponent
+    BlameComponent,
+    CardComponent
   ],
   imports: [
     BrowserModule,
-    HttpModule,
+    HttpClientModule,
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
     MatCardModule,
-    MatInputModule,
+    MatFormFieldModule,
     MatButtonModule,
-    NoConflictStyleCompatibilityMode,
+    MatInputModule,
   ],
-  providers: [AppService],
+  providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

@@ -1,14 +1,42 @@
-.team-dashboard {
-    width: 45%;
-    margin: 10px;
-    height: 80%;
-    border: solid 2px rgba(255, 255, 255, 0.4);
-    background-color: #1f434f;
+.f-board, .e-board {
+  width: 48%;
+  height: 90%;
 }
 
-ul {
-    list-style: none;
-    padding: 0 20px;
-    font-size: 1.3em;
-    color: #ffffff;
+.f-board {
+  background: #EAFFEE;
+}
+
+.e-board {
+  background: #FFF1EF;
+}
+
+.ship-image {
+  max-height: 80%;
+}
+
+.player {
+  height: 8%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.player div {
+  margin-right: 10px;
+}
+
+.player-name {
+  font-size: 14pt;
+}
+
+.player-ship {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  align-items: center;
+}
+
+.player-ship div {
+  font-weight: bold;
 }

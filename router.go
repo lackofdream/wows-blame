@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 
 	"github.com/gorilla/mux"
-	"gitlab.com/lackofdream/wows-blame/model"
 )
 
 type JSONRouter struct {
@@ -18,9 +17,9 @@ func (j *JSONRouter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if strings.HasPrefix(r.URL.Path, "/api/") {
 		w.Header().Set("Content-Type", "application/json")
 		if r.URL.Path != "/api/setup" && !SetupFlag {
-			json.NewEncoder(w).Encode(model.WowsBlameVersion{
-				Ok:      false,
-				Message: "not setup yet",
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"ok":      false,
+				"message": "not setup yet",
 			})
 			return
 		}
